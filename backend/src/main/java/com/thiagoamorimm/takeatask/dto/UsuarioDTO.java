@@ -12,7 +12,11 @@ public class UsuarioDTO {
     private Long id;
     private String nome;
     private String login;
+    private String email; 
     private PerfilUsuario perfil;
+    private String cargo; 
+    private String telefone; 
+    private String departamento; 
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
     private boolean ativo;
@@ -24,13 +28,17 @@ public class UsuarioDTO {
     private String formatoData;
     private String formatoHora;
 
-    public UsuarioDTO(Long id, String nome, String login, PerfilUsuario perfil, LocalDateTime dataCriacao,
-            LocalDateTime dataAtualizacao, boolean ativo, String tema, String idioma, String fusoHorario,
-            String formatoData, String formatoHora) {
+    public UsuarioDTO(Long id, String nome, String login, String email, PerfilUsuario perfil, String cargo, String telefone, String departamento,
+                      LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, boolean ativo, String tema,
+                      String idioma, String fusoHorario, String formatoData, String formatoHora) {
         this.id = id;
         this.nome = nome;
         this.login = login;
+        this.email = email;
         this.perfil = perfil;
+        this.cargo = cargo;
+        this.telefone = telefone;
+        this.departamento = departamento;
         this.dataCriacao = dataCriacao;
         this.dataAtualizacao = dataAtualizacao;
         this.ativo = ativo;

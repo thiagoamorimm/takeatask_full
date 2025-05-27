@@ -34,9 +34,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioRepository.findByLogin(usuarioCreateDTO.getLogin()).isPresent()) {
             throw new ConflictException("Usuário", "login", usuarioCreateDTO.getLogin());
         }
+        if (usuarioRepository.findByEmail(usuarioCreateDTO.getEmail()).isPresent()) { 
+            throw new ConflictException("Usuário", "email", usuarioCreateDTO.getEmail());
+        }
         Usuario usuario = new Usuario();
         BeanUtils.copyProperties(usuarioCreateDTO, usuario);
-        usuario.setSenha(passwordEncoder.encode(usuarioCreateDTO.getSenha())); // Criptografar senha
+        usuario.setSenha(passwordEncoder.encode(usuarioCreateDTO.getSenha())); 
         Usuario novoUsuario = usuarioRepository.save(usuario);
         return convertToDTO(novoUsuario);
     }
@@ -68,13 +71,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     public List<UsuarioDTO> listarTodosUsuarios(String query) {
         List<Usuario> usuarios;
         if (query != null && !query.trim().isEmpty()) {
-            // Supondo que UsuarioRepository tenha um método para buscar por nome ou email
-            // Se não, precisaremos adicionar ou usar Specification
-            // Exemplo: tags =
-            // tagRepository.findByNomeContainingIgnoreCaseOrDescricaoContainingIgnoreCase(query,
-            // query);
-            // Para usuários, poderia ser por nome ou email.
-            // Vamos precisar adicionar este método ao UsuarioRepository
             usuarios = usuarioRepository.findByNomeContainingIgnoreCaseOrLoginContainingIgnoreCase(query, query);
         } else {
             usuarios = usuarioRepository.findAll();
@@ -98,17 +94,33 @@ public class UsuarioServiceImpl implements UsuarioService {
             }
             usuarioExistente.setLogin(usuarioUpdateDTO.getLogin());
         }
+        if (usuarioUpdateDTO.getEmail() != null && !usuarioUpdateDTO.getEmail().equals(usuarioExistente.getEmail())) {
+            if (usuarioRepository.findByEmailAndIdNot(usuarioUpdateDTO.getEmail(), id).isPresent()) {
+                throw new ConflictException("Usuário", "email", usuarioUpdateDTO.getEmail());
+            }
+            usuarioExistente.setEmail(usuarioUpdateDTO.getEmail());
+        }
+
         if (usuarioUpdateDTO.getSenha() != null && !usuarioUpdateDTO.getSenha().isEmpty()) {
             usuarioExistente.setSenha(passwordEncoder.encode(usuarioUpdateDTO.getSenha()));
         }
         if (usuarioUpdateDTO.getPerfil() != null) {
             usuarioExistente.setPerfil(usuarioUpdateDTO.getPerfil());
         }
+        if (usuarioUpdateDTO.getCargo() != null) {
+            usuarioExistente.setCargo(usuarioUpdateDTO.getCargo());
+        }
+        if (usuarioUpdateDTO.getTelefone() != null) {
+            usuarioExistente.setTelefone(usuarioUpdateDTO.getTelefone());
+        }
+        if (usuarioUpdateDTO.getDepartamento() != null) {
+            usuarioExistente.setDepartamento(usuarioUpdateDTO.getDepartamento());
+        }
+
         if (usuarioUpdateDTO.getAtivo() != null) {
             usuarioExistente.setAtivo(usuarioUpdateDTO.getAtivo());
         }
 
-        // Atualizar campos de configuração geral
         if (usuarioUpdateDTO.getTema() != null) {
             usuarioExistente.setTema(usuarioUpdateDTO.getTema());
         }
@@ -133,22 +145,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void deletarUsuario(Long id) {
         Usuario usuario = findUsuarioEntityById(id);
-        // Em vez de deletar, podemos desativar o usuário:
-        // usuario.setAtivo(false);
-        // usuarioRepository.save(usuario);
-        usuarioRepository.delete(usuario); // Ou deletar de fato
+        usuarioRepository.delete(usuario); 
     }
 
     private UsuarioDTO convertToDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
-        // BeanUtils.copyProperties irá copiar todos os campos com nomes
-        // correspondentes,
-        // incluindo os novos campos de configuração, pois foram adicionados a ambas as
-        // classes.
         BeanUtils.copyProperties(usuario, dto);
-        // A senha não é copiada por padrão se não existir no DTO, o que é bom.
-        // Se precisasse excluir explicitamente: BeanUtils.copyProperties(usuario, dto,
-        // "senha");
         return dto;
     }
 }

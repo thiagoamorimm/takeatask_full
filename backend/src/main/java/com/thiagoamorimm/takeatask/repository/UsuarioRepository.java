@@ -11,6 +11,8 @@ import java.util.List; // Adicionar import para List
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByLogin(String login);
+    Optional<Usuario> findByEmail(String email); // Novo método
+    Optional<Usuario> findByEmailAndIdNot(String email, Long id); // Novo método
 
     List<Usuario> findByNomeContainingIgnoreCaseOrLoginContainingIgnoreCase(String nome, String login);
     // Outros métodos de consulta personalizados podem ser adicionados aqui
