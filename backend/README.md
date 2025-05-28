@@ -118,3 +118,5 @@ A estrutura base do backend inclui:
 -   Considerar estratégias de paginação para listagens que podem retornar muitos dados.
 
 Este README fornece uma visão geral do estado atual do backend.
+
+Developer: Open Settings (JSON)
